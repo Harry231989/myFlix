@@ -32975,11 +32975,22 @@ var MainView = /*#__PURE__*/function (_React$Component) {
   }
 
   _createClass(MainView, [{
-    key: "componentDidMount",
-    value: function componentDidMount() {
+    key: "onMovieClick",
+    value: function onMovieClick(movie) {
+      this.setState({
+        selectedMovie: movie
+      });
+    }
+  }, {
+    key: "getMovies",
+    value: function getMovies(token) {
       var _this2 = this;
 
-      _axios.default.get('https://harry-heroku-23.herokuapp.com/movies').then(function (response) {
+      _axios.default.get('https://harry-heroku-23.herokuapp.com/movies', {
+        headers: {
+          Authorization: "Bearer ".concat(token)
+        }
+      }).then(function (response) {
         // Assign the result to the state
         _this2.setState({
           movies: response.data
@@ -32989,11 +33000,16 @@ var MainView = /*#__PURE__*/function (_React$Component) {
       });
     }
   }, {
-    key: "onMovieClick",
-    value: function onMovieClick(movie) {
-      this.setState({
-        selectedMovie: movie
-      });
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var accessToken = localStorage.getItem('token');
+
+      if (accessToken !== null) {
+        this.setState({
+          user: localStorage.getItem('user')
+        });
+        this.getMovies(accessToken);
+      }
     }
   }, {
     key: "onLoggedIn",
@@ -33007,29 +33023,21 @@ var MainView = /*#__PURE__*/function (_React$Component) {
       this.getMovies(authData.token);
     }
   }, {
-    key: "getMovies",
-    value: function getMovies(token) {
-      var _this3 = this;
-
-      _axios.default.get('https://harry-heroku-23.herokuapp.com/movies', {
-        headers: {
-          Authorization: "Bearer ".concat(token)
-        }
-      }).then(function (response) {
-        // Assign the result to the state
-        _this3.setState({
-          movies: response.data
-        });
-      }).catch(function (error) {
-        console.log(error);
+    key: "onLoggedOut",
+    value: function onLoggedOut() {
+      localStorage.removeItem('token');
+      localStorge.removeItem('user');
+      this.setState({
+        user: null
       });
+      window.open('/', '_self');
     } // This overrides the render() method of the superclass
     // No need to call super() though, as it does nothing by default
 
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this3 = this;
 
       // before the data is initially loaded
       var _this$state = this.state,
@@ -33038,7 +33046,7 @@ var MainView = /*#__PURE__*/function (_React$Component) {
           user = _this$state.user;
       if (!user) return _react.default.createElement(_loginView.default, {
         onLoggedIn: function onLoggedIn(user) {
-          return _this4.onLoggedIn(user);
+          return _this3.onLoggedIn(user);
         }
       }); // Before the movies have been loaded
 
@@ -33054,7 +33062,7 @@ var MainView = /*#__PURE__*/function (_React$Component) {
           key: movie._id,
           movie: movie,
           onClick: function onClick(movie) {
-            return _this4.onMovieClick(movie);
+            return _this3.onMovieClick(movie);
           }
         });
       }));
@@ -33227,7 +33235,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "50136" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "57886" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};
