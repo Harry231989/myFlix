@@ -1,9 +1,11 @@
 import React from 'react';
 import axios from 'axios';
 
+import { BrowserRouter as Router, Route } from "react-router-dom";
 import LoginView from '../login-view/login-view';
 import MovieCard from '../movie-card/movie-card';
 import MovieView from '../movie-view/movie-view';
+import { RegistrationView } from '../registration-view/registration-view';
 
 class MainView extends React.Component {
 
@@ -11,7 +13,7 @@ class MainView extends React.Component {
     super();
 
     this.state = {
-      movies: null,
+      movies: [],
       selectedMovie: null,
       user: null
     };
@@ -76,26 +78,30 @@ class MainView extends React.Component {
   // No need to call super() though, as it does nothing by default
   render() {
     // before the data is initially loaded
-    const { movies, selectedMovie, user } = this.state;
+    const { movies, user } = this.state;
 
-    if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
+    //if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
 
     // Before the movies have been loaded
     if (!movies) return <div className="main-view" />;
 
     return (
-      <div className="main-view">
-        {selectedMovie
-          ? <MovieView movie={selectedMovie} />
-          : movies.map(movie => (
 
-            <MovieCard key={movie._id} movie={movie} onClick={movie => this.onMovieClick(movie)} />
-
-
-
-          ))
+      <Router>
+        <Route exact path="/" render={() => {
+          if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
+          return movies.map(m => <MovieCard key={m._id} movie={m} />)
         }
-      </div>
+        } />
+        <Route path="/register" render={() => <RegistrationView />} />
+        <div className="main-view">
+          <Route exact path="/" render={() => movies.map(m => <MovieCard key={m._id} movie={m} />)} />
+          <Route path="/movies/:movieId" render={({ match }) => <MovieView movie={movies.find(m => m._id === match.params.movieId)} />} />
+
+          <Route exact path="/genres/:name" render={() => <GenreView movie={movies.find(m => m.genre === match.params.name)} />} />
+          <Route exact path="/directors/:name" render={() => <DirectorView movie={movies.find(m => m.director === match.params.name)} />} />
+        </div>
+      </Router>
     );
   }
 }
