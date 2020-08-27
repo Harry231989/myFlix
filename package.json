@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "prop-types": "^15.7.2",

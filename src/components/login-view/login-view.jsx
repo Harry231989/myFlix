@@ -35,10 +35,11 @@ function LoginView(props) {
         <Form.Control type="password" placeholder="Password" value={password} onChange={e => setPassword(e.target.value)} />
       </Form.Group>
       <Button variant="primary" type="submit" onClick={handleSubmit}>
-        Submit
+        Sign In
         </Button>
+
     </Form>
-  )
+  );
 }
 
 export default LoginView;
