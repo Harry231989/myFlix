@@ -8,7 +8,7 @@ import Form from 'react-bootstrap/Form';
 import Button from 'react-bootstrap/Button';
 import './registration-view.scss';
 
-export function RegistrationView(props) {
+function RegistrationView(props) {
   const [username, createUsername] = useState('');
   const [password, createPassword] = useState('');
   const [email, createEmail] = useState('');
@@ -93,3 +93,5 @@ export function RegistrationView(props) {
     </Container>
   );
 }
+
+export default RegistrationView;
