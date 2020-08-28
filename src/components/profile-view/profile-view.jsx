@@ -8,7 +8,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Card from 'react-bootstrap/Card';
 
-class ProfileView extends React.Component {
+export class ProfileView extends React.Component {
   constructor(props) {
     super(props);
 
@@ -32,7 +32,7 @@ class ProfileView extends React.Component {
     const username = localStorage.getItem('user');
 
     axios
-      .get(https: `//harry-heroku-23.herokuapp.com/login/users/${username}`, {
+      .get(`https: //harry-heroku-23.herokuapp.com/users/`, {
         headers: { Authorization: `Bearer ${token}` },
       })
 
@@ -98,4 +98,4 @@ class ProfileView extends React.Component {
     );
   }
 }
-export default ProfileView;
+//export default ProfileView;
