@@ -1,28 +1,48 @@
 import React from 'react';
 import axios from 'axios';
 
+import { connect } from 'react-redux';
+
 import { BrowserRouter as Router, Route } from "react-router-dom";
+
+
+import { setMovies } from '../../actions/actions';
+
+
+import MoviesList from '../movies-list/movies-list';
 import LoginView from '../login-view/login-view';
 import MovieCard from '../movie-card/movie-card';
 import MovieView from '../movie-view/movie-view';
 import { RegistrationView } from '../registration-view/registration-view';
 
 class MainView extends React.Component {
-
   constructor() {
     super();
 
-    this.state = {
-      movies: [],
-      selectedMovie: null,
-      user: null
-    };
+    this, state = {
+      user: null,
+    }
   }
+  /*
+    constructor() {
+      super();
+  
+      this.state = {
+        movies: [],
+        selectedMovie: null,
+        user: null
+      };
+    }
+  */
 
-  onMovieClick(movie) {
-    this.setState({
-      selectedMovie: movie
-    });
+  componentDidMount() {
+    let accessToken = localStorage.getItem('token');
+    if (accessToken !== null) {
+      this.setState({
+        user: localStorage.getItem('user')
+      });
+      this.getMovies(accessToken);
+    }
   }
 
 
@@ -43,15 +63,6 @@ class MainView extends React.Component {
 
   }
 
-  componentDidMount() {
-    let accessToken = localStorage.getItem('token');
-    if (accessToken !== null) {
-      this.setState({
-        user: localStorage.getItem('user')
-      });
-      this.getMovies(accessToken);
-    }
-  }
 
 
   onLoggedIn(authData) {
@@ -74,11 +85,9 @@ class MainView extends React.Component {
     window.open('/', '_self');
   }
 
-  // This overrides the render() method of the superclass
-  // No need to call super() though, as it does nothing by default
   render() {
-    // before the data is initially loaded
-    const { movies, user } = this.state;
+    let { movies } = this.props;
+    let { user } = this.state;
 
     //if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
 
@@ -86,16 +95,16 @@ class MainView extends React.Component {
     if (!movies) return <div className="main-view" />;
 
     return (
-
-      <Router>
-        <Route exact path="/" render={() => {
-          if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
-          return movies.map(m => <MovieCard key={m._id} movie={m} />)
-        }
-        } />
-        <Route path="/register" render={() => <RegistrationView />} />
+      <Router basename="/client">
         <div className="main-view">
-          <Route exact path="/" render={() => movies.map(m => <MovieCard key={m._id} movie={m} />)} />
+          <Route exact path="/" render={() => {
+            if (!user) return <LoginView onLoggedIn={user => this.onLoggedIn(user)} />;
+            return <MoviesList movies={movies} />;
+
+          }} />
+          <Route path="/register" render={() => <RegistrationView />} />
+
+
           <Route path="/movies/:movieId" render={({ match }) => <MovieView movie={movies.find(m => m._id === match.params.movieId)} />} />
 
           <Route exact path="/genres/:name" render={() => <GenreView movie={movies.find(m => m.genre === match.params.name)} />} />
@@ -106,4 +115,11 @@ class MainView extends React.Component {
   }
 }
 
-export default MainView;
+// #3
+let mapStateToProps = state => {
+  return { movies: state.movies }
+}
+
+// #4
+export default connect(mapStateToProps, { setMovies })(MainView);
+
