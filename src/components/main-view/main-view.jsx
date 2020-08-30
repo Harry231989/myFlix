@@ -6,22 +6,25 @@ import { connect } from 'react-redux';
 import { BrowserRouter as Router, Route } from "react-router-dom";
 
 
-import { setMovies } from '../../actions/actions';
+import { setMovies, setUser } from '../../actions/actions';
 
 
 import MoviesList from '../movies-list/movies-list';
 import LoginView from '../login-view/login-view';
 import MovieCard from '../movie-card/movie-card';
 import MovieView from '../movie-view/movie-view';
+import DirectorView from '../director-view/director-view';
+import GenreView from '../genre-view/genre-view';
+import ProfileView from '../profile-view/profile-view';
 import { RegistrationView } from '../registration-view/registration-view';
 
 class MainView extends React.Component {
   constructor() {
     super();
 
-    this, state = {
+    this.state = {
       user: null,
-    }
+    };
   }
   /*
     constructor() {
@@ -49,13 +52,13 @@ class MainView extends React.Component {
 
   getMovies(token) {
     axios.get('https://harry-heroku-23.herokuapp.com/movies', {
-      headers: { Authorization: `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     })
       .then(response => {
         // Assign the result to the state
-        this.setState({
+        this.props.setMovies({
           movies: response.data
-        });
+        })
       })
       .catch(function (error) {
         console.log(error);
